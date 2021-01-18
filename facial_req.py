@@ -13,15 +13,14 @@ import cv2
 currentname = "unknown"
 # Determine faces from encodings.pickle file model created from train_model.py
 encodingsP = "encodings.pickle"
-# # use this xml file
-# cascade = "Detection/haarcascade_frontalface_default.xml"
+# use this xml file
+cascade = "Detection/haarcascade_frontalface_default.xml"
 
 # load the known faces and embeddings along with OpenCV's Haar
 # cascade for face detection
 print("[INFO] loading encodings + face detector...")
 data = pickle.loads(open(encodingsP, "rb").read())
-detector = cv2.CascadeClassifier("Detection/haarcascade_frontalface_default.xml")
-
+detector = cv2.CascadeClassifier(cascade)
 
 # initialize the video stream and allow the camera sensor to warm up
 print("[INFO] starting video stream...")
@@ -37,7 +36,6 @@ while True:
     # grab the frame from the threaded video stream and resize it
     # to 500px (to speedup processing)
     frame = vs.read()
-    print(frame)
     frame = imutils.resize(frame, width=500)
 
     # convert the input frame from (1) BGR to grayscale (for face
