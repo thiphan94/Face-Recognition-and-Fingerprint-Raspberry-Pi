@@ -11,8 +11,8 @@ Face recognition: python data.py ( for get image to dataset)
 
 https://maker.pro/raspberry-pi/projects/raspberry-pi-fingerprint-scanner-using-a-usb-to-serial-ttl-converter ( connect TTL converter and Fingerprint sensor)
 
-Installation of the Raspberry Pi Fingerprint Library:
-sudo bash
+Installation of the Raspberry Pi Fingerprint Library:<br />
+sudo bash<br />
 wget -O - http://apt.pm-codeworks.de/pm-codeworks.de.gpg | apt-key add -
 wget http://apt.pm-codeworks.de/pm-codeworks.list -P /etc/apt/sources.list.d/
 apt-get update
