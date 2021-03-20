@@ -5,7 +5,9 @@ ssh -Y pi@raspberrypi.local ( commande pour lancer raspberrypi)
 (pass: raspberry)
 workon cv
 
-Face recognition: python data.py ( for get image to dataset)<br />
+Face recognition:
+                  mkdir dataset <br />
+                  python data.py ( for get image to dataset)<br />
                   python trainer.py ( train model)<br />
                   python recognition.py (to detect)<br />
 
