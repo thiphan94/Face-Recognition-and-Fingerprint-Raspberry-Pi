@@ -5,6 +5,8 @@ ssh -Y pi@raspberrypi.local ( commande pour lancer raspberrypi)
 (pass: raspberry)
 workon cv
 
+Documentation: GPIO Raspberry Pi: https://www.raspberrypi.org/documentation/usage/gpio/
+
 Face recognition:
                   mkdir dataset <br />
                   python data.py ( for get image to dataset)<br />
