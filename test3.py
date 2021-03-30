@@ -21,7 +21,7 @@ camera.framerate = 30
 rawCapture = PiRGBArray(camera, size=(640, 480))
 
 
-faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
+faceCascade = cv2.CascadeClassifier("Detection/haarcascade_frontalface_default.xml")
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read("trainer.yml")
 
