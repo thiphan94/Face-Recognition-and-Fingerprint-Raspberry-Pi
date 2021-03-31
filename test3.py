@@ -40,7 +40,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
             if value == id_:
                 print(name)
 
-        if conf <= 30:
+        if conf <= 70:
             GPIO.output(relay_pin, 1)
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(

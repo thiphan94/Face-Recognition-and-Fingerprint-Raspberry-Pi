@@ -1,6 +1,10 @@
 import cv2
 import numpy as np
 import os
+import serial
+import RPi.GPIO as GPIO
+from time import sleep
+
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 recognizer.read("trainer/trainer.yml")
@@ -35,7 +39,17 @@ while True:
         # Check if confidence is less them 100 ==> "0" is perfect match
         if confidence < 100:
             id = names[id]
+            print(id)
             confidence = "  {0}%".format(round(100 - confidence))
+
+            cam.release()
+            cv2.destroyAllWindows()
+            e = input("Password:")
+            if e == "Hallo":
+                print("ok")
+
+            else:
+                print("Unauthorized")
         else:
             id = "unknown"
             confidence = "  {0}%".format(round(100 - confidence))
