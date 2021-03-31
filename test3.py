@@ -36,11 +36,11 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
         id_, conf = recognizer.predict(roiGray)
 
-        for name, value in dict.items():
+        for name, value in dicti.items():
             if value == id_:
                 print(name)
 
-        if conf <= 70:
+        if conf <= 30:
             GPIO.output(relay_pin, 1)
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(
