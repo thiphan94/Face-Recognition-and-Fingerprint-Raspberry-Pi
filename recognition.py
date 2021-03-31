@@ -195,7 +195,11 @@ minW = 0.1 * cam.get(3)
 minH = 0.1 * cam.get(4)
 while True:
     ret, img = cam.read()
+
     # img = cv2.flip(img, -1)  # Flip vertically
+    if ret == False:
+        break
+        # end of movie
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     faces = faceCascade.detectMultiScale(
@@ -226,10 +230,14 @@ while True:
 
             if get_fingerprint():
                 print(
-                    "Detected #", finger.finger_id, "with confidence", finger.confidence
+                    "door lock Detected #",
+                    finger.finger_id,
+                    "with confidence",
+                    finger.confidence,
                 )
+                # print(LOCK DOOR)
             else:
-                print("Finger not found")
+                print("Finger not found, unlock")
 
         else:
             id = "unknown"
