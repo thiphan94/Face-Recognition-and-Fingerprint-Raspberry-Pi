@@ -8,6 +8,17 @@ import board
 from digitalio import DigitalInOut, Direction
 import adafruit_fingerprint
 
+import RPi.GPIO as GPIO
+
+relay = 18
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+# GPIO.setmode(GPIO.BOARD)
+# GPIO.setuprelay(GPIO.OUT)
+# GPIO.output(relay, 0)
+GPIO.setup(relay, GPIO.OUT)
+GPIO.output(relay, GPIO.LOW)
+
 led = DigitalInOut(board.D13)
 led.direction = Direction.OUTPUT
 
@@ -235,9 +246,11 @@ while True:
                     "with confidence",
                     finger.confidence,
                 )
+                GPIO.output(relay, 1)
                 # print(LOCK DOOR)
             else:
                 print("Finger not found, unlock")
+                GPIO.output(relay, 0)
 
         else:
             id = "unknown"
