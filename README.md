@@ -28,3 +28,7 @@ python /usr/share/doc/python-fingerprint/examples/example_enroll.py ( get data)<
 python /usr/share/doc/python-fingerprint/examples/example_search.py (see whether finger is recognized, position of fingerprint)<br />
 python /usr/share/doc/python-fingerprint/examples/example_delete.py ( delete fingerprint with number of position)<br />
 python /usr/share/doc/python-fingerprint/examples/example_downloadimage.py (download fingerprint image)<br />
+
+
+
+commande line: ssh -N -L localhost:8000:localhost:8000 pi@raspberrypi.local : connect localhost 8000 of Raspberry Pi to local machine ( laptop)
