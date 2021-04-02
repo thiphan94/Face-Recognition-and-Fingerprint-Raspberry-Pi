@@ -13,26 +13,17 @@ import RPi.GPIO as GPIO
 relay = 18
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-# GPIO.setmode(GPIO.BOARD)
-# GPIO.setuprelay(GPIO.OUT)
-# GPIO.output(relay, 0)
 GPIO.setup(relay, GPIO.OUT)
 GPIO.output(relay, GPIO.LOW)
 
 led = DigitalInOut(board.D13)
 led.direction = Direction.OUTPUT
 
-# uart = busio.UART(board.TX, board.RX, baudrate=57600)
 
-# If using with a computer such as Linux/RaspberryPi, Mac, Windows with USB/serial converter:
 import serial
 
 uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=10)
-# uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=1000)
-# uart = serial.Serial("/dev/ttyUSB0", baudrate=9600, timeout=1)
-# If using with Linux/Raspberry Pi and hardware UART:
-# import serial
-# uart = serial.Serial("/dev/ttyS0", baudrate=57600, timeout=1)
+
 
 finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 
@@ -228,14 +219,10 @@ while True:
             print(id)
             confidence = "  {0}%".format(round(100 - confidence))
 
+            time.sleep(10)
+
             cam.release()
             cv2.destroyAllWindows()
-            # e = input("Password:")
-            # if e == "Hallo":
-            #     print("ok")
-            #
-            # else:
-            #     print("Unauthorized")
 
             print("----------------")
 
