@@ -32,3 +32,5 @@ python /usr/share/doc/python-fingerprint/examples/example_downloadimage.py (down
 
 
 commande line: ssh -N -L localhost:8000:localhost:8000 pi@raspberrypi.local : connect localhost 8000 of Raspberry Pi to local machine ( laptop)
+
+![Screenshot](Screenshot from 2021-04-02 17-53-10.png)
