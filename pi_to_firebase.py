@@ -1,13 +1,6 @@
-# import RPi.GPIO as GPIO
-
-# GPIO.setwarnings(False)
-# GPIO.setmode(GPIO.BOARD)
-# GPIO.setup(10, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 from datetime import datetime
 import time
 import picamera
-
-# from time import sleep
 import os
 
 import cv2
@@ -46,21 +39,3 @@ storage.child("snapshot.jpg").put("snapshot.jpg")
 print("Image sent")
 os.remove("snapshot.jpg")
 print("File Removed")
-
-# s = input()
-# print(s)
-# if s == "A":
-#     print("pushed")
-#     now = datetime.now()
-#     dt = now.strftime("%d%m%Y%H:%M:%S")
-#     name = dt + ".jpg"
-#     camera.capture(name)
-#     print(name + " saved")
-#     storage.child(name).put(name)
-#     print("Image sent")
-#     os.remove(name)
-#     print("File Removed")
-# sleep(2)
-
-# except:
-#     camera.close()
