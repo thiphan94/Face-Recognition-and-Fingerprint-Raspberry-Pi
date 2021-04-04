@@ -1,0 +1,8 @@
+apiKey: "AIzaSyDJGdK9S9GWOQzpA8Vt0JnTuBQKPIX6G-w",
+    authDomain: "raspberry-image.firebaseapp.com",
+    databaseURL: "https://raspberry-image-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "raspberry-image",
+    storageBucket: "raspberry-image.appspot.com",
+    messagingSenderId: "69330911402",
+    appId: "1:69330911402:web:eddfee167d37422d6990d3",
+    measurementId: "G-LX4RCNF8Y5"
