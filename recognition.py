@@ -3,12 +3,36 @@ import numpy as np
 import os
 import time
 import board
+from time import sleep
+from datetime import datetime
+import pyrebase
+from picamera.array import PiRGBArray
+import picamera
+from picamera import PiCamera
+
 
 # import busio
 from digitalio import DigitalInOut, Direction
 import adafruit_fingerprint
 
 import RPi.GPIO as GPIO
+
+
+firebaseConfig = {
+    "apiKey": "AIzaSyDJGdK9S9GWOQzpA8Vt0JnTuBQKPIX6G-w",
+    "authDomain": "raspberry-image.firebaseapp.com",
+    "databaseURL": "https://raspberry-image-default-rtdb.europe-west1.firebasedatabase.app",
+    "projectId": "raspberry-image",
+    "storageBucket": "raspberry-image.appspot.com",
+    "messagingSenderId": "69330911402",
+    "appId": "1:69330911402:web:eddfee167d37422d6990d3",
+    "measurementId": "G-LX4RCNF8Y5",
+}
+
+firebase = pyrebase.initialize_app(firebaseConfig)
+
+storage = firebase.storage()
+
 
 relay = 18
 GPIO.setwarnings(False)
@@ -20,12 +44,12 @@ led = DigitalInOut(board.D13)
 led.direction = Direction.OUTPUT
 
 
-import serial
-
-uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=10)
-
-
-finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+# import serial
+#
+# uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=10)
+#
+#
+# finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
 
 ##################################################
 
@@ -215,15 +239,37 @@ while True:
         id, confidence = recognizer.predict(gray[y : y + h, x : x + w])
         # Check if confidence is less them 100 ==> "0" is perfect match
         if confidence < 70:
-            id = names[id]
-            print(id)
-            confidence = "  {0}%".format(round(100 - confidence))
 
-            time.sleep(10)
+            id = names[id]
+            confidence = "  {0}%".format(round(100 - confidence))
+            # confidence = "  {0}%".format(round(confidence))
+            print(id)
+            cv2.putText(img, str(id), (x + 5, y - 5), font, 1, (255, 255, 255), 2)
+            cv2.putText(
+                img, str(confidence), (x + 5, y + h - 5), font, 1, (0, 255, 0), 1
+            )
+
+            # time.sleep(5)
+            #
+            # cam.release()
+            # cv2.destroyAllWindows()
+            # time.sleep(1)
+            # camera = picamera.PiCamera()
+            # camera.resolution = (800, 600)
+            # camera.start_preview()
+            # time.sleep(5)
+            # now = datetime.now()
+            # dt = now.strftime("%d%m%Y%H:%M:%S")
+            # name = dt + ".jpg"
+            # camera.capture(name, resize=(640, 480))
+            # camera.stop_preview()
+            # storage.child(name).put(name)
+            # print("Image sent")
+            # os.remove(name)
+            # print("File Removed")
 
             cam.release()
             cv2.destroyAllWindows()
-
             print("----------------")
 
             if get_fingerprint():
@@ -239,12 +285,36 @@ while True:
                 print("Finger not found, unlock")
                 GPIO.output(relay, 0)
 
+            time.sleep(5)
+
+            # cam.release()
+            # cv2.destroyAllWindows()
+            # time.sleep(1)
+            camera = picamera.PiCamera()
+            camera.resolution = (800, 600)
+            camera.start_preview()
+            time.sleep(5)
+            now = datetime.now()
+            dt = now.strftime("%d%m%Y%H:%M:%S")
+            name = dt + ".jpg"
+            camera.capture(name, resize=(640, 480))
+            camera.stop_preview()
+            storage.child(name).put(name)
+            print("Image sent")
+            os.remove(name)
+            print("File Removed")
+
         else:
             id = "unknown"
             confidence = "  {0}%".format(round(100 - confidence))
+            # confidence = "  {0}%".format(round(confidence))
+            cv2.putText(img, str(id), (x + 5, y - 5), font, 1, (255, 255, 255), 2)
+            cv2.putText(
+                img, str(confidence), (x + 5, y + h - 5), font, 1, (0, 255, 0), 1
+            )
 
-        cv2.putText(img, str(id), (x + 5, y - 5), font, 1, (255, 255, 255), 2)
-        cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)
+        # cv2.putText(img, str(id), (x + 5, y - 5), font, 1, (255, 255, 255), 2)
+        # cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)
 
     cv2.imshow("camera", img)
     k = cv2.waitKey(10) & 0xFF  # Press 'ESC' for exiting video
