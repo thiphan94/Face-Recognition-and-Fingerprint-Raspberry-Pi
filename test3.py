@@ -32,6 +32,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = faceCascade.detectMultiScale(gray, scaleFactor=1.5, minNeighbors=5)
     for (x, y, w, h) in faces:
+
         roiGray = gray[y : y + h, x : x + w]
 
         id_, conf = recognizer.predict(roiGray)
@@ -39,16 +40,39 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
         for name, value in dicti.items():
             if value == id_:
                 print(name)
-
+            break
+        print("out")
         if conf <= 70:
+            print("open")
+
             GPIO.output(relay_pin, 1)
             cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             cv2.putText(
-                frame, name + str(conf), (x, y), font, 2, (0, 0, 255), 2, cv2.LINE_AA
+                frame,
+                name + str(conf),
+                (x, y),
+                font,
+                2,
+                (0, 0, 255),
+                2,
+                cv2.LINE_AA,
             )
+            # camera = picamera.PiCamera()
+            # camera.resolution = (800, 600)
+            camera.start_preview()
+            time.sleep(5)
+            name = "kiki.jpg"
+            camera.capture(name, resize=(640, 480))
+            camera.stop_preview()
+            storage.child(name).put(name)
+            print("Image sent")
+            os.remove(name)
+            print("File Removed")
+            # break
 
         else:
             GPIO.output(relay_pin, 0)
+            # break
 
     cv2.imshow("frame", frame)
     key = cv2.waitKey(1)

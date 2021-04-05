@@ -18,17 +18,6 @@ firebaseConfig = {
     "measurementId": "G-LX4RCNF8Y5",
 }
 
-
-print("b")
-firebase = pyrebase.initialize_app(firebaseConfig)
-print("c")
-storage = firebase.storage()
-print("d")
-# camera = PiCamera()
-print("e")
-# while True:
-#     try:
-# if GPIO.input(10) == GPIO.HIGH:
 camera = picamera.PiCamera()
 camera.resolution = (800, 600)
 camera.start_preview()

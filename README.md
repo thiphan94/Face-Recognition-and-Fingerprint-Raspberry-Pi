@@ -1,36 +1,30 @@
-# Raspberry Pi 4 Facial Recognition
+# Two-Way Door Lock Security System - Raspberry Pi - OpenCV
+# Thi PHAN - Student of Computer Science - University Paris 8 - Course Internet of Things
 
 ssh -Y pi@raspberrypi.local ( commande pour lancer raspberrypi)
 
 (pass: raspberry)
 workon cv
 
+1.Face detection and data gathering (take photo)<br />
+Folder to store images : mkdir dataset <br />
+Run file for data gathering: python3 data.py ( for get image to dataset)<br />
+2.Training recognizer (train model)<br />
+python trainer.py ( train model)<br />
+3.Facial recognition, Fingerprint recognition and send notifications to Android application <br />
+python recognition.py <br />
+Facial recognition => Fingerprint recognition => capture image of people in front of camera => send image to firebase store => send notifications to Android application 
+Circuit Diagram<br />
+![Screenshot](abc.png)
+
+
 Documentation: GPIO Raspberry Pi: https://www.raspberrypi.org/documentation/usage/gpio/
 
-Face recognition:
-                  mkdir dataset <br />
-                  python data.py ( for get image to dataset)<br />
-                  python trainer.py ( train model)<br />
-                  python recognition.py (to detect)<br />
 
 https://maker.pro/raspberry-pi/projects/raspberry-pi-fingerprint-scanner-using-a-usb-to-serial-ttl-converter ( connect TTL converter and Fingerprint sensor)
 
-Installation of the Raspberry Pi Fingerprint Library:<br />
-sudo bash<br />
-wget -O - http://apt.pm-codeworks.de/pm-codeworks.de.gpg | apt-key add - <br />
-wget http://apt.pm-codeworks.de/pm-codeworks.list -P /etc/apt/sources.list.d/ <br />
-apt-get update <br />
-apt-get install python-fingerprint --yes<br />
-If an error has occurred: apt-get -f install<br />
+Test if fingerprint sensor work<br />
+command line: python3 fingerprint_simpletest.py<br />
 
-Save and manage fingerprint:<br />
-python /usr/share/doc/python-fingerprint/examples/example_enroll.py ( get data)<br />
-python /usr/share/doc/python-fingerprint/examples/example_search.py (see whether finger is recognized, position of fingerprint)<br />
-python /usr/share/doc/python-fingerprint/examples/example_delete.py ( delete fingerprint with number of position)<br />
-python /usr/share/doc/python-fingerprint/examples/example_downloadimage.py (download fingerprint image)<br />
-
-
-
-commande line: ssh -N -L localhost:8000:localhost:8000 pi@raspberrypi.local : connect localhost 8000 of Raspberry Pi to local machine ( laptop)
-
-![Screenshot](abc.png)
+Remarque:<br />
+commande line: ssh -N -L localhost:8000:localhost:8000 pi@raspberrypi.local : connect localhost 8000 of Raspberry Pi to local machine ( laptop)<br />
