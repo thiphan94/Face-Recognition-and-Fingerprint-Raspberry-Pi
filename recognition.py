@@ -9,30 +9,34 @@ import pyrebase
 from picamera.array import PiRGBArray
 import picamera
 from picamera import PiCamera
-
-
-# import busio
+import requests
 from digitalio import DigitalInOut, Direction
 import adafruit_fingerprint
 
 import RPi.GPIO as GPIO
 
+import serial
+from datetime import date
 
-firebaseConfig = {
-    "apiKey": "AIzaSyDJGdK9S9GWOQzpA8Vt0JnTuBQKPIX6G-w",
-    "authDomain": "raspberry-image.firebaseapp.com",
-    "databaseURL": "https://raspberry-image-default-rtdb.europe-west1.firebasedatabase.app",
-    "projectId": "raspberry-image",
-    "storageBucket": "raspberry-image.appspot.com",
-    "messagingSenderId": "69330911402",
-    "appId": "1:69330911402:web:eddfee167d37422d6990d3",
-    "measurementId": "G-LX4RCNF8Y5",
+today = date.today()
+
+uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=10)
+
+
+finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+
+config = {
+    "apiKey": "AIzaSyDPy-_F290OjEOpKQgtt9F1JtGk76tFaRU",
+    "authDomain": "rpi-security-ee0c0.firebaseapp.com",
+    "databaseURL": "https://rpi-security-ee0c0-default-rtdb.europe-west1.firebasedatabase.app",
+    "projectId": "rpi-security-ee0c0",
+    "storageBucket": "rpi-security-ee0c0.appspot.com",
+    "messagingSenderId": "391814499821",
+    "appId": "1:391814499821:web:b892ff4e18ad36c4acabe4",
+    "measurementId": "G-66JBD9P1H6",
 }
-
-firebase = pyrebase.initialize_app(firebaseConfig)
-
-storage = firebase.storage()
-
+firebase = pyrebase.initialize_app(config)
+db = firebase.database()
 
 relay = 18
 GPIO.setwarnings(False)
@@ -44,19 +48,27 @@ led = DigitalInOut(board.D13)
 led.direction = Direction.OUTPUT
 
 
-# import serial
-#
-# uart = serial.Serial("/dev/ttyUSB0", baudrate=57600, timeout=10)
-#
-#
-# finger = adafruit_fingerprint.Adafruit_Fingerprint(uart)
+# function for setting up emails
+def send_message(id):
+    return requests.post(
+        "https://api.mailgun.net/v3/sandboxd71d1f5272f54ccd9fa926d5554b5a02.mailgun.org/messages",
+        auth=("api", "21f1a75d40a6aba32a504e4f749d36a5-1553bd45-5afa17a2"),
+        # files=[("attachment", (name, open("name", "rb").read()))],
+        data={
+            "from": "hello@example.com",
+            "to": ["thiphan94@gmail.com"],
+            "subject": "You have a visitor",
+            "html": "<html>" + str(id) + " is at your door.  </html>",
+        },
+    )
 
-##################################################
+
+# function for getting fingerprint
 
 
 def get_fingerprint():
     """Get a finger print image, template it, and see if it matches!"""
-    print("Waiting for image...")
+    print("Waiting for image of fingerprint...")
     while finger.get_image() != adafruit_fingerprint.OK:
         pass
     print("Templating...")
@@ -68,139 +80,7 @@ def get_fingerprint():
     return True
 
 
-# pylint: disable=too-many-branches
-def get_fingerprint_detail():
-    """Get a finger print image, template it, and see if it matches!
-    This time, print out each error instead of just returning on failure"""
-    print("Getting image...", end="", flush=True)
-    i = finger.get_image()
-    if i == adafruit_fingerprint.OK:
-        print("Image taken")
-    else:
-        if i == adafruit_fingerprint.NOFINGER:
-            print("No finger detected")
-        elif i == adafruit_fingerprint.IMAGEFAIL:
-            print("Imaging error")
-        else:
-            print("Other error")
-        return False
-
-    print("Templating...", end="", flush=True)
-    i = finger.image_2_tz(1)
-    if i == adafruit_fingerprint.OK:
-        print("Templated")
-    else:
-        if i == adafruit_fingerprint.IMAGEMESS:
-            print("Image too messy")
-        elif i == adafruit_fingerprint.FEATUREFAIL:
-            print("Could not identify features")
-        elif i == adafruit_fingerprint.INVALIDIMAGE:
-            print("Image invalid")
-        else:
-            print("Other error")
-        return False
-
-    print("Searching...", end="", flush=True)
-    i = finger.finger_fast_search()
-    # pylint: disable=no-else-return
-    # This block needs to be refactored when it can be tested.
-    if i == adafruit_fingerprint.OK:
-        print("Found fingerprint!")
-        return True
-    else:
-        if i == adafruit_fingerprint.NOTFOUND:
-            print("No match found")
-        else:
-            print("Other error")
-        return False
-
-
-# pylint: disable=too-many-statements
-def enroll_finger(location):
-    """Take a 2 finger images and template it, then store in 'location'"""
-    for fingerimg in range(1, 3):
-        if fingerimg == 1:
-            print("Place finger on sensor...", end="", flush=True)
-        else:
-            print("Place same finger again...", end="", flush=True)
-
-        while True:
-            i = finger.get_image()
-            if i == adafruit_fingerprint.OK:
-                print("Image taken")
-                break
-            if i == adafruit_fingerprint.NOFINGER:
-                print(".", end="", flush=True)
-            elif i == adafruit_fingerprint.IMAGEFAIL:
-                print("Imaging error")
-                return False
-            else:
-                print("Other error")
-                return False
-
-        print("Templating...", end="", flush=True)
-        i = finger.image_2_tz(fingerimg)
-        if i == adafruit_fingerprint.OK:
-            print("Templated")
-        else:
-            if i == adafruit_fingerprint.IMAGEMESS:
-                print("Image too messy")
-            elif i == adafruit_fingerprint.FEATUREFAIL:
-                print("Could not identify features")
-            elif i == adafruit_fingerprint.INVALIDIMAGE:
-                print("Image invalid")
-            else:
-                print("Other error")
-            return False
-
-        if fingerimg == 1:
-            print("Remove finger")
-            time.sleep(1)
-            while i != adafruit_fingerprint.NOFINGER:
-                i = finger.get_image()
-
-    print("Creating model...", end="", flush=True)
-    i = finger.create_model()
-    if i == adafruit_fingerprint.OK:
-        print("Created")
-    else:
-        if i == adafruit_fingerprint.ENROLLMISMATCH:
-            print("Prints did not match")
-        else:
-            print("Other error")
-        return False
-
-    print("Storing model #%d..." % location, end="", flush=True)
-    i = finger.store_model(location)
-    if i == adafruit_fingerprint.OK:
-        print("Stored")
-    else:
-        if i == adafruit_fingerprint.BADLOCATION:
-            print("Bad storage location")
-        elif i == adafruit_fingerprint.FLASHERR:
-            print("Flash storage error")
-        else:
-            print("Other error")
-        return False
-
-    return True
-
-
 ##################################################
-
-
-def get_num():
-    """Use input() to get a valid number from 1 to 127. Retry till success!"""
-    i = 0
-    while (i > 127) or (i < 1):
-        try:
-            i = int(input("Enter ID # from 1-127: "))
-        except ValueError:
-            pass
-    return i
-
-
-###########################################################
 
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
@@ -211,7 +91,7 @@ font = cv2.FONT_HERSHEY_SIMPLEX
 # iniciate id counter
 id = 0
 # names related to ids: example ==> Marcelo: id=1,  etc
-names = ["None", "Thi", "Paula", "Ilza", "Z", "W"]
+names = ["None", "Thi"]
 # Initialize and start realtime video capture
 cam = cv2.VideoCapture(-1)
 cam.set(3, 640)  # set video widht
@@ -222,7 +102,6 @@ minH = 0.1 * cam.get(4)
 while True:
     ret, img = cam.read()
 
-    # img = cv2.flip(img, -1)  # Flip vertically
     if ret == False:
         break
         # end of movie
@@ -234,43 +113,26 @@ while True:
         minNeighbors=5,
         minSize=(int(minW), int(minH)),
     )
+    now = datetime.now()
+
+    # dt = now.strftime("%d%m%Y%H:%M:%S")
+    dt = now.strftime("%d%m%Y")
+    temps = now.strftime("%H:%M:%S")
+
     for (x, y, w, h) in faces:
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
         id, confidence = recognizer.predict(gray[y : y + h, x : x + w])
         # Check if confidence is less them 100 ==> "0" is perfect match
-        if confidence < 70:
-
+        # time.sleep(2)
+        if confidence < 100:
             id = names[id]
             confidence = "  {0}%".format(round(100 - confidence))
-            # confidence = "  {0}%".format(round(confidence))
             print(id)
-            cv2.putText(img, str(id), (x + 5, y - 5), font, 1, (255, 255, 255), 2)
-            cv2.putText(
-                img, str(confidence), (x + 5, y + h - 5), font, 1, (0, 255, 0), 1
-            )
-
-            # time.sleep(5)
-            #
-            # cam.release()
-            # cv2.destroyAllWindows()
-            # time.sleep(1)
-            # camera = picamera.PiCamera()
-            # camera.resolution = (800, 600)
-            # camera.start_preview()
-            # time.sleep(5)
-            # now = datetime.now()
-            # dt = now.strftime("%d%m%Y%H:%M:%S")
-            # name = dt + ".jpg"
-            # camera.capture(name, resize=(640, 480))
-            # camera.stop_preview()
-            # storage.child(name).put(name)
-            # print("Image sent")
-            # os.remove(name)
-            # print("File Removed")
 
             cam.release()
             cv2.destroyAllWindows()
-            print("----------------")
+            time.sleep(2)
+            print("Fingerprint----------------")
 
             if get_fingerprint():
                 print(
@@ -279,42 +141,30 @@ while True:
                     "with confidence",
                     finger.confidence,
                 )
+
+                data = {"name": str(id), "date": str(dt), "time": str(temps)}
+                db.child("users").push(data)
                 GPIO.output(relay, 1)
                 # print(LOCK DOOR)
             else:
+                id = "unknown"
                 print("Finger not found, unlock")
                 GPIO.output(relay, 0)
+                data = {"name": str(id), "date": str(dt), "time": str(temps)}
+                db.child("users").push(data)
 
-            time.sleep(5)
-
-            # cam.release()
-            # cv2.destroyAllWindows()
-            # time.sleep(1)
-            camera = picamera.PiCamera()
-            camera.resolution = (800, 600)
-            camera.start_preview()
-            time.sleep(5)
-            now = datetime.now()
-            dt = now.strftime("%d%m%Y%H:%M:%S")
-            name = dt + ".jpg"
-            camera.capture(name, resize=(640, 480))
-            camera.stop_preview()
-            storage.child(name).put(name)
-            print("Image sent")
-            os.remove(name)
-            print("File Removed")
+                request = send_message(id)
+                print(
+                    "Status Code: " + format(request.status_code)
+                )  # 200 status code means email sent successfully
 
         else:
+
             id = "unknown"
             confidence = "  {0}%".format(round(100 - confidence))
-            # confidence = "  {0}%".format(round(confidence))
-            cv2.putText(img, str(id), (x + 5, y - 5), font, 1, (255, 255, 255), 2)
-            cv2.putText(
-                img, str(confidence), (x + 5, y + h - 5), font, 1, (0, 255, 0), 1
-            )
 
-        # cv2.putText(img, str(id), (x + 5, y - 5), font, 1, (255, 255, 255), 2)
-        # cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)
+        cv2.putText(img, str(id), (x + 5, y - 5), font, 1, (255, 255, 255), 2)
+        cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)
 
     cv2.imshow("camera", img)
     k = cv2.waitKey(10) & 0xFF  # Press 'ESC' for exiting video

@@ -17,6 +17,11 @@ firebaseConfig = {
     "appId": "1:69330911402:web:eddfee167d37422d6990d3",
     "measurementId": "G-LX4RCNF8Y5",
 }
+firebase = pyrebase.initialize_app(firebaseConfig)
+
+storage = firebase.storage()
+
+# camera = PiCamera()
 
 camera = picamera.PiCamera()
 camera.resolution = (800, 600)
