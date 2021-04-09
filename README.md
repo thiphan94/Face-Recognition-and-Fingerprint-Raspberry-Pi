@@ -28,3 +28,6 @@ command line: python3 fingerprint_simpletest.py<br />
 
 Remarque:<br />
 commande line: ssh -N -L localhost:8000:localhost:8000 pi@raspberrypi.local : connect localhost 8000 of Raspberry Pi to local machine ( laptop)<br />
+
+Link github of Android Application (Kotlin) for the project, we can send image to application to see who visitors of today:
+https://github.com/thiphan94/Application-for-Project-Raspberry-Security
