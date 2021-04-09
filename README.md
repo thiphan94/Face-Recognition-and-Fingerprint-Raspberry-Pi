@@ -13,7 +13,7 @@ Run file for data gathering: python3 data.py ( for get image to dataset)<br />
 python trainer.py ( train model)<br />
 3.Facial recognition, Fingerprint recognition and send notifications to Android application <br />
 python recognition.py <br />
-Facial recognition => Fingerprint recognition => capture image of people in front of camera => send image to firebase store => send notifications to Android application 
+Facial recognition => Fingerprint recognition => Send data ( name, date, time) to Firebase Real time => send notifications to Android application and mail
 Circuit Diagram<br />
 ![Screenshot](abc.png)
 
@@ -23,7 +23,7 @@ Documentation: GPIO Raspberry Pi: https://www.raspberrypi.org/documentation/usag
 
 https://maker.pro/raspberry-pi/projects/raspberry-pi-fingerprint-scanner-using-a-usb-to-serial-ttl-converter ( connect TTL converter and Fingerprint sensor)
 
-Test if fingerprint sensor work<br />
+Fingerprint sensor (get fingerprint, enroll fingerprint, delete fingerprint)<br />
 command line: python3 fingerprint_simpletest.py<br />
 
 Remarque:<br />
