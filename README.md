@@ -17,6 +17,10 @@ Facial recognition => Fingerprint recognition => Send data ( name, date, time) t
 Circuit Diagram<br />
 ![Screenshot](abc.png)
 
+![alt text](./IMG_20210409_233416.jpg)
+
+![alt text](./sketching.png)
+
 
 Documentation: GPIO Raspberry Pi: https://www.raspberrypi.org/documentation/usage/gpio/
 
